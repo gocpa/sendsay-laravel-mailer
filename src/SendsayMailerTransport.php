@@ -43,10 +43,6 @@ class SendsayMailerTransport extends AbstractTransport
         ]);
 
         $result = $response->getContent(true);
-        logger()->debug('Отправлено сообщение в sendsay', [
-            'payload' => $payload,
-            'response' => $response,
-        ]);
 
         try {
             $statusCode = $response->getStatusCode();
@@ -54,6 +50,10 @@ class SendsayMailerTransport extends AbstractTransport
                 throw new HttpTransportException('Unable to send an email: ' . $result['message'] . sprintf(' (code %d).', $statusCode), $response);
             }
             $result = $response->toArray(false);
+            logger()->debug('Отправлено сообщение в sendsay', [
+                'payload' => $payload,
+                'response' => $response,
+            ]);
         } catch (DecodingExceptionInterface) {
             throw new HttpTransportException('Unable to send an email: ' . $response->getContent(false) . sprintf(' (code %d).', $statusCode), $response);
         } catch (TransportExceptionInterface $e) {
