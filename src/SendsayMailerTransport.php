@@ -32,7 +32,7 @@ class SendsayMailerTransport extends AbstractTransport
         $email = MessageConverter::toEmail($message->getOriginalMessage());
 
         $headers = [
-            'Authorization: sendsay apikey='.$this->apikey,
+            'Authorization: sendsay apikey=' . $this->apikey,
         ];
 
         $payload = $this->getPayload($email);
@@ -43,15 +43,19 @@ class SendsayMailerTransport extends AbstractTransport
         ]);
 
         $result = $response->getContent(true);
+        logger()->debug('Отправлено сообщение в sendsay', [
+            'payload' => $payload,
+            'response' => $response,
+        ]);
 
         try {
             $statusCode = $response->getStatusCode();
             if (200 !== $statusCode) {
-                throw new HttpTransportException('Unable to send an email: '.$result['message'].sprintf(' (code %d).', $statusCode), $response);
+                throw new HttpTransportException('Unable to send an email: ' . $result['message'] . sprintf(' (code %d).', $statusCode), $response);
             }
             $result = $response->toArray(false);
         } catch (DecodingExceptionInterface) {
-            throw new HttpTransportException('Unable to send an email: '.$response->getContent(false).sprintf(' (code %d).', $statusCode), $response);
+            throw new HttpTransportException('Unable to send an email: ' . $response->getContent(false) . sprintf(' (code %d).', $statusCode), $response);
         } catch (TransportExceptionInterface $e) {
             throw new HttpTransportException('Could not reach the remote sendsay server.', $response, 0, $e);
         }
@@ -93,6 +97,6 @@ class SendsayMailerTransport extends AbstractTransport
 
     public function getEndpoint(): string
     {
-        return 'https://api.sendsay.ru/general/api/v100/json/'.$this->account;
+        return 'https://api.sendsay.ru/general/api/v100/json/' . $this->account;
     }
 }

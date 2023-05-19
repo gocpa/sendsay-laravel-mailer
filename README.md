@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/gocpa/sendsay-laravel-mailer/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/gocpa/sendsay-laravel-mailer/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/gocpa/sendsay-laravel-mailer.svg?style=flat-square)](https://packagist.org/packages/gocpa/sendsay-laravel-mailer)
 
-The unofficial Sendsay Laravel Driver
+Неофициальный драйвер Laravel Mailer для отправки писем через Sendsay
 
 ## Installation
 
@@ -18,7 +18,7 @@ composer require gocpa/sendsay-laravel-mailer
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="sendsay-laravel-mailer-config"
+php artisan vendor:publish --provider="GoCPA\\SendsayLaravelMailer\\SendsayMailerServiceProvider"
 ```
 
 This is the contents of the published config file:
