@@ -19,7 +19,7 @@
         "php": "^8.1",
         "illuminate/contracts": "^10.0",
         "spatie/laravel-package-tools": "^1.14.0",
-        "symfony/http-client": "*",
+        "guzzlehttp/guzzle": "^7.5",
         "symfony/mailer": "^6.2"
     },
     "require-dev": {

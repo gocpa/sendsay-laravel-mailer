@@ -26,8 +26,9 @@ class SendsayMailerServiceProvider extends PackageServiceProvider
             $config = $this->app['config']->get('sendsay-laravel-mailer', []);
             $account = $config['account'] ?? null;
             $apikey = $config['apikey'] ?? null;
+            $proxy = $config['proxy'] ?? null;
 
-            return new SendsayMailerTransport($account, $apikey);
+            return new SendsayMailerTransport($account, $apikey, $proxy);
         });
     }
 }

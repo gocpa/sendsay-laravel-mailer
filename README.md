@@ -27,6 +27,7 @@ This is the contents of the published config file:
 return [
     'apikey' => env('MAIL_SENDSAY_APIKEY'),
     'account' => env('MAIL_SENDSAY_ACCOUNT'),
+    'proxy' => env('MAIL_SENDSAY_PROXY'),
 ];
 ```
 
