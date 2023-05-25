@@ -31,7 +31,7 @@ class SendsayMailerTransport extends AbstractTransport
             'proxy' => $this->proxy,
         ])
             ->acceptJson()
-            ->withToken('apikey=' . $this->apikey, 'sendsay')
+            ->withToken('apikey='.$this->apikey, 'sendsay')
             ->post(
                 $this->getEndpoint(),
                 $payload
@@ -77,6 +77,6 @@ class SendsayMailerTransport extends AbstractTransport
 
     public function getEndpoint(): string
     {
-        return 'https://api.sendsay.ru/general/api/v100/json/' . $this->account;
+        return 'https://api.sendsay.ru/general/api/v100/json/'.$this->account;
     }
 }
