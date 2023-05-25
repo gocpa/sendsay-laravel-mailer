@@ -14,7 +14,7 @@ class SendsayMailerTransport extends AbstractTransport
     public function __construct(
         protected string $account,
         protected string $apikey,
-        protected string $proxy,
+        protected ?string $proxy,
     ) {
         parent::__construct();
     }
@@ -26,11 +26,11 @@ class SendsayMailerTransport extends AbstractTransport
     {
         $email = MessageConverter::toEmail($message->getOriginalMessage());
         $payload = $this->getPayload($email);
+        $options = $this->getOptions();
 
-        $response = Http::withOptions([
-            'proxy' => $this->proxy,
-        ])
-            ->acceptJson()
+        $response = Http::acceptJson()
+            ->withOptions($options)
+
             ->withToken('apikey='.$this->apikey, 'sendsay')
             ->post(
                 $this->getEndpoint(),
@@ -78,5 +78,15 @@ class SendsayMailerTransport extends AbstractTransport
     public function getEndpoint(): string
     {
         return 'https://api.sendsay.ru/general/api/v100/json/'.$this->account;
+    }
+
+    public function getOptions(): array
+    {
+        $result = [];
+        if ($this->proxy) {
+            $result['proxy'] = $this->proxy;
+        }
+
+        return $result;
     }
 }
