@@ -2,6 +2,14 @@
 
 All notable changes to `sendsay-laravel-mailer` will be documented in this file.
 
+## 1.0.6 - 2023-07-07
+
+### What's Changed
+
+- Bump aglipanci/laravel-pint-action from 2.2.0 to 2.3.0 by @dependabot in https://github.com/gocpa/sendsay-laravel-mailer/pull/1
+
+**Full Changelog**: https://github.com/gocpa/sendsay-laravel-mailer/compare/1.0.5...1.0.6
+
 ## 1.0.5 - 2023-07-07
 
 ### What's Changed
