@@ -24,25 +24,27 @@ class SendsayMailerTransport extends AbstractTransport
      */
     protected function doSend(SentMessage $message): void
     {
-        $email = MessageConverter::toEmail($message->getOriginalMessage());
-        $payload = $this->getPayload($email);
-        $options = $this->getOptions();
 
-        $response = Http::acceptJson()
-            ->withOptions($options)
-
-            ->withToken('apikey='.$this->apikey, 'sendsay')
-            ->post(
-                $this->getEndpoint(),
-                $payload
-            )
-            ->throw()
-            ->json();
-
-        logger()->debug('Отправлено сообщение в sendsay', [
-            'payload' => $payload,
-            'response' => $response,
-        ]);
+        try {
+            $email = MessageConverter::toEmail($message->getOriginalMessage());
+            $payload = $this->getPayload($email);
+            $options = $this->getOptions();
+            $response = Http::acceptJson()
+                ->withOptions($options)
+                ->withToken('apikey='.$this->apikey, 'sendsay')
+                ->post(
+                    $this->getEndpoint(),
+                    $payload
+                )
+                ->throw()
+                ->json();
+        } catch (\Throwable $th) {
+            logger()->error('Ошибка при отправке сообщения в sendsay', [
+                'response' => $response,
+                'payload' => $payload,
+            ]);
+            throw $th;
+        }
     }
 
     public function __toString(): string
