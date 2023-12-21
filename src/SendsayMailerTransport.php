@@ -56,9 +56,10 @@ class SendsayMailerTransport extends AbstractTransport
                 'message' => [],
             ],
             'sendwhen' => 'now',
-            'users.list' => $to->getAddress(),
-            'group' => 'masssending',
+            'email' => $to->getAddress(),
+            'group' => 'personal',
             'action' => 'issue.send',
+            'apikey' => $this->apikey,
         ];
 
         if ($email->getTextBody()) {
