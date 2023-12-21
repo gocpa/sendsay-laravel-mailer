@@ -24,27 +24,16 @@ class SendsayMailerTransport extends AbstractTransport
      */
     protected function doSend(SentMessage $message): void
     {
+        $email = MessageConverter::toEmail($message->getOriginalMessage());
+        $payload = $this->getPayload($email);
+        $options = $this->getOptions();
 
-        try {
-            $email = MessageConverter::toEmail($message->getOriginalMessage());
-            $payload = $this->getPayload($email);
-            $options = $this->getOptions();
-            $response = Http::acceptJson()
-                ->withOptions($options)
-                ->withToken('apikey='.$this->apikey, 'sendsay')
-                ->post(
-                    $this->getEndpoint(),
-                    $payload
-                )
-                ->throw()
-                ->json();
-        } catch (\Throwable $th) {
-            logger()->error('Ошибка при отправке сообщения в sendsay', [
-                'response' => $response,
-                'payload' => $payload,
-            ]);
-            throw $th;
-        }
+        $response = Http::acceptJson()
+            ->withOptions($options)
+            ->withToken('apikey='.$this->apikey, 'sendsay')
+            ->post($this->getEndpoint(), $payload)
+            ->throw()
+            ->json();
     }
 
     public function __toString(): string
@@ -54,15 +43,20 @@ class SendsayMailerTransport extends AbstractTransport
 
     private function getPayload(Email $email): array
     {
+        $from = collect($email->getFrom())->first();
+        $to = collect($email->getTo())->first();
+
         $payload = [
             'letter' => [
-                'from.email' => collect($email->getFrom())->first()->getAddress(),
-                'from.name' => collect($email->getFrom())->first()->getName(),
+                'from' => [
+                    'email' => $from->getAddress(),
+                    'name' => $from->getName(),
+                ],
                 'subject' => $email->getSubject(),
                 'message' => [],
             ],
             'sendwhen' => 'now',
-            'users.list' => collect($email->getTo())->first()->getAddress(),
+            'users.list' => $to->getAddress(),
             'group' => 'masssending',
             'action' => 'issue.send',
         ];
@@ -84,11 +78,12 @@ class SendsayMailerTransport extends AbstractTransport
 
     public function getOptions(): array
     {
-        $result = [];
+        $options = [];
+
         if ($this->proxy) {
-            $result['proxy'] = $this->proxy;
+            $options['proxy'] = $this->proxy;
         }
 
-        return $result;
+        return $options;
     }
 }
