@@ -2,6 +2,15 @@
 
 All notable changes to `sendsay-laravel-mailer` will be documented in this file.
 
+## v1.0.9 - 2023-12-21
+
+### What's Changed
+
+* Bump actions/checkout from 3 to 4 by @dependabot in https://github.com/gocpa/sendsay-laravel-mailer/pull/4
+* Bump stefanzweifel/git-auto-commit-action from 4 to 5 by @dependabot in https://github.com/gocpa/sendsay-laravel-mailer/pull/5
+
+**Full Changelog**: https://github.com/gocpa/sendsay-laravel-mailer/compare/v1.0.8...v1.0.9
+
 ## v1.0.8 - 2023-12-21
 
 **Full Changelog**: https://github.com/gocpa/sendsay-laravel-mailer/compare/v1.0.7...v1.0.8
