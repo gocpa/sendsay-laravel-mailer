@@ -15,6 +15,7 @@ class SendsayMailerTransport extends AbstractTransport
         protected string $account,
         protected string $apikey,
         protected ?string $proxy,
+        protected ?string $dkimId,
     ) {
         parent::__construct();
     }
@@ -60,6 +61,7 @@ class SendsayMailerTransport extends AbstractTransport
             'group' => 'personal',
             'action' => 'issue.send',
             'apikey' => $this->apikey,
+            'dkim.id' => $this->dkimId,
         ];
 
         if ($email->getTextBody()) {
