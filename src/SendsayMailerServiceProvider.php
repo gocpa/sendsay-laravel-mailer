@@ -27,8 +27,9 @@ class SendsayMailerServiceProvider extends PackageServiceProvider
             $account = $config['account'] ?? null;
             $apikey = $config['apikey'] ?? null;
             $proxy = $config['proxy'] ?? null;
+            $dkimId = $config['dkimId'] ?? null;
 
-            return new SendsayMailerTransport($account, $apikey, $proxy);
+            return new SendsayMailerTransport($account, $apikey, $proxy, $dkimId);
         });
     }
 }
