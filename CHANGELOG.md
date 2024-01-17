@@ -2,6 +2,20 @@
 
 All notable changes to `sendsay-laravel-mailer` will be documented in this file.
 
+## v1.1.0 - 2024-01-17
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.3.0 to 2.3.1 by @dependabot in https://github.com/gocpa/sendsay-laravel-mailer/pull/7
+* Refactor GitHub workflow for testing with updated by @vaninanton in https://github.com/gocpa/sendsay-laravel-mailer/pull/9
+* Add dkmId in config and payload. by @Avangero in https://github.com/gocpa/sendsay-laravel-mailer/pull/8
+
+### New Contributors
+
+* @Avangero made their first contribution in https://github.com/gocpa/sendsay-laravel-mailer/pull/8
+
+**Full Changelog**: https://github.com/gocpa/sendsay-laravel-mailer/compare/v1.0.9...v1.1.0
+
 ## v1.0.9 - 2023-12-21
 
 ### What's Changed
