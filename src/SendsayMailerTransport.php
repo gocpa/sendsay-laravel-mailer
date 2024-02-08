@@ -49,10 +49,8 @@ class SendsayMailerTransport extends AbstractTransport
 
         $payload = [
             'letter' => [
-                'from' => [
-                    'email' => $from->getAddress(),
-                    'name' => $from->getName(),
-                ],
+                'from.email' => $from->getAddress(),
+                'from.name' => $from->getName(),
                 'subject' => $email->getSubject(),
                 'message' => [],
             ],
