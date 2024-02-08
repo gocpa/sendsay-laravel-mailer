@@ -2,6 +2,10 @@
 
 All notable changes to `sendsay-laravel-mailer` will be documented in this file.
 
+## v1.0.11 - 2024-02-08
+
+**Full Changelog**: https://github.com/gocpa/sendsay-laravel-mailer/compare/v1.0.10...v1.0.11
+
 ## v1.0.10 - 2024-01-17
 
 ### What's Changed
