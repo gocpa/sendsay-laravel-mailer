@@ -10,7 +10,7 @@
         "spatie/laravel-package-tools": "^1.14"
     },
     "require-dev": {
-        "nunomaduro/larastan": "^2",
+        "larastan/larastan": "^3.0",
         "orchestra/testbench": "^8|^9|^10|^11",
         "phpunit/phpunit": "^10.5|^11.0|^12.0"
     },
