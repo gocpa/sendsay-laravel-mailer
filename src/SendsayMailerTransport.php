@@ -1,13 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GoCPA\SendsayLaravelMailer;
 
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\MessageConverter;
+use Throwable;
 
 class SendsayMailerTransport extends AbstractTransport
 {
@@ -25,16 +30,21 @@ class SendsayMailerTransport extends AbstractTransport
      */
     protected function doSend(SentMessage $message): void
     {
-        $email = MessageConverter::toEmail($message->getOriginalMessage());
-        $payload = $this->getPayload($email);
-        $options = $this->getOptions();
+        try {
+            $email = MessageConverter::toEmail($message->getOriginalMessage());
 
-        $response = Http::acceptJson()
-            ->withOptions($options)
-            ->withToken('apikey='.$this->apikey, 'sendsay')
-            ->post($this->getEndpoint(), $payload)
-            ->throw()
-            ->json();
+            Http::acceptJson()
+                ->withOptions($this->getOptions())
+                ->withToken('apikey='.$this->apikey, 'sendsay')
+                ->post($this->getEndpoint(), $this->getPayload($email))
+                ->throw();
+        } catch (Throwable $exception) {
+            throw new TransportException(
+                'Sendsay delivery failed: '.$exception->getMessage(),
+                0,
+                $exception,
+            );
+        }
     }
 
     public function __toString(): string
@@ -44,8 +54,8 @@ class SendsayMailerTransport extends AbstractTransport
 
     private function getPayload(Email $email): array
     {
-        $from = collect($email->getFrom())->first();
-        $to = collect($email->getTo())->first();
+        $from = $this->firstAddress($email->getFrom(), 'from');
+        $to = $this->firstAddress($email->getTo(), 'to');
 
         $payload = [
             'letter' => [
@@ -70,6 +80,20 @@ class SendsayMailerTransport extends AbstractTransport
         }
 
         return $payload;
+    }
+
+    /**
+     * @param array<int, Address> $addresses
+     */
+    private function firstAddress(array $addresses, string $field): Address
+    {
+        $address = $addresses[0] ?? null;
+
+        if (! $address instanceof Address) {
+            throw new TransportException(sprintf('Email "%s" address is required for Sendsay transport.', $field));
+        }
+
+        return $address;
     }
 
     public function getEndpoint(): string
