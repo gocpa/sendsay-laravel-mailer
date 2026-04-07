@@ -12,8 +12,7 @@
     "require-dev": {
         "nunomaduro/larastan": "^2",
         "orchestra/testbench": "^8|^9|^10|^11",
-        "pestphp/pest": "^2",
-        "pestphp/pest-plugin-laravel": "^2"
+        "phpunit/phpunit": "^10.5|^11.0|^12.0"
     },
     "autoload": {
         "psr-4": {
@@ -26,7 +25,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/pest"
+        "test": "vendor/bin/phpunit -c phpunit.xml.dist"
     },
     "extra": {
         "laravel": {
@@ -36,10 +35,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    }
+    "prefer-stable": true
 }
