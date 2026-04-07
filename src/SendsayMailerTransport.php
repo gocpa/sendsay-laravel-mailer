@@ -5,40 +5,64 @@ declare(strict_types=1);
 namespace GoCPA\SendsayLaravelMailer;
 
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\Mailer\Envelope;
 use Symfony\Component\Mailer\Exception\TransportException;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\MessageConverter;
-use Throwable;
 
-class SendsayMailerTransport extends AbstractTransport
+final class SendsayMailerTransport extends AbstractTransport
 {
     public function __construct(
-        protected string $account,
-        protected string $apikey,
-        protected ?string $proxy,
-        protected ?string $dkimId,
+        private readonly string $account,
+        private readonly string $apikey,
+        private readonly ?string $proxy = null,
+        private readonly ?string $dkimId = null
     ) {
         parent::__construct();
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
     protected function doSend(SentMessage $message): void
     {
         try {
             $email = MessageConverter::toEmail($message->getOriginalMessage());
 
-            Http::acceptJson()
-                ->withOptions($this->getOptions())
-                ->withToken('apikey='.$this->apikey, 'sendsay')
-                ->post($this->getEndpoint(), $this->getPayload($email))
+            $from = $this->resolveFromAddress($email);
+            $to = $this->resolveToAddress($email);
+
+            $payload = [
+                'action' => 'issue.send',
+                'apikey' => $this->apikey,
+                'email' => $to->getAddress(),
+                'group' => 'personal',
+                'sendwhen' => 'now',
+                'letter' => [
+                    'from.email' => $from->getAddress(),
+                    'from.name' => $from->getName(),
+                    'subject' => $email->getSubject() ?? '',
+                    'message' => array_filter([
+                        'text' => $email->getTextBody(),
+                        'html' => $email->getHtmlBody(),
+                    ], static fn (mixed $value): bool => is_string($value) && $value !== ''),
+                ],
+                'dkim.id' => $this->dkimId,
+            ];
+
+            $request = Http::acceptJson()
+                ->withToken('apikey=' . $this->apikey, 'sendsay');
+
+            if ($this->proxy !== null && $this->proxy !== '') {
+                $request = $request->withOptions([
+                    'proxy' => $this->proxy,
+                ]);
+            }
+
+            $request
+                ->post($this->endpoint(), $payload)
                 ->throw();
-        } catch (Throwable $exception) {
+        } catch (\Throwable $exception) {
             throw new TransportException(
                 'Sendsay delivery failed: '.$exception->getMessage(),
                 0,
@@ -52,63 +76,33 @@ class SendsayMailerTransport extends AbstractTransport
         return 'sendsay';
     }
 
-    private function getPayload(Email $email): array
+    private function endpoint(): string
     {
-        $from = $this->firstAddress($email->getFrom(), 'from');
-        $to = $this->firstAddress($email->getTo(), 'to');
-
-        $payload = [
-            'letter' => [
-                'from.email' => $from->getAddress(),
-                'from.name' => $from->getName(),
-                'subject' => $email->getSubject(),
-                'message' => [],
-            ],
-            'sendwhen' => 'now',
-            'email' => $to->getAddress(),
-            'group' => 'personal',
-            'action' => 'issue.send',
-            'apikey' => $this->apikey,
-            'dkim.id' => $this->dkimId,
-        ];
-
-        if ($email->getTextBody()) {
-            $payload['letter']['message']['text'] = $email->getTextBody();
-        }
-        if ($email->getHtmlBody()) {
-            $payload['letter']['message']['html'] = $email->getHtmlBody();
-        }
-
-        return $payload;
+        return sprintf(
+            'https://api.sendsay.ru/general/api/v100/json/%s',
+            $this->account
+        );
     }
 
-    /**
-     * @param array<int, Address> $addresses
-     */
-    private function firstAddress(array $addresses, string $field): Address
+    private function resolveFromAddress(Email $email): Address
     {
-        $address = $addresses[0] ?? null;
+        $from = $email->getFrom()[0] ?? null;
 
-        if (! $address instanceof Address) {
-            throw new TransportException(sprintf('Email "%s" address is required for Sendsay transport.', $field));
+        if (! $from instanceof Address) {
+            throw new TransportException('From address is required for Sendsay transport.');
         }
 
-        return $address;
+        return $from;
     }
 
-    public function getEndpoint(): string
+    private function resolveToAddress(Email $email): Address
     {
-        return 'https://api.sendsay.ru/general/api/v100/json/'.$this->account;
-    }
+        $to = $email->getTo()[0] ?? null;
 
-    public function getOptions(): array
-    {
-        $options = [];
-
-        if ($this->proxy) {
-            $options['proxy'] = $this->proxy;
+        if (! $to instanceof Address) {
+            throw new TransportException('Recipient address is required for Sendsay transport.');
         }
 
-        return $options;
+        return $to;
     }
 }

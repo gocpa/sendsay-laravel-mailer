@@ -1,38 +1,48 @@
-# Неофициальный Laravel драйвер для Sendsay
+# Sendsay Laravel Mailer
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/gocpa/sendsay-laravel-mailer.svg?style=flat-square)](https://packagist.org/packages/gocpa/sendsay-laravel-mailer)
-[![Total Downloads](https://img.shields.io/packagist/dt/gocpa/sendsay-laravel-mailer.svg?style=flat-square)](https://packagist.org/packages/gocpa/sendsay-laravel-mailer)
-
-Неофициальный драйвер Laravel Mailer для отправки писем через Sendsay
+Production-ready Laravel mail transport driver for Sendsay API.
 
 ## Compatibility
 
-- Laravel: 10.x - 13.x
-- PHP: 8.1 - 8.5
+- PHP: `8.1` to `8.5`
+- Laravel: `10` to `13`
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require gocpa/sendsay-laravel-mailer
 ```
 
-You can publish the config file with:
+## Publish Config
 
 ```bash
-php artisan vendor:publish --provider="GoCPA\\SendsayLaravelMailer\\SendsayMailerServiceProvider"
+php artisan vendor:publish --provider="GoCPA\SendsayLaravelMailer\SendsayMailerServiceProvider" --tag="sendsay-laravel-mailer-config"
 ```
 
-This is the contents of the published config file:
+## .env Example
+
+```dotenv
+MAIL_MAILER=sendsay
+MAIL_SENDSAY_ACCOUNT=your-account
+MAIL_SENDSAY_APIKEY=your-api-key
+MAIL_SENDSAY_PROXY=
+MAIL_SENDSAY_DKIM_ID=
+```
+
+## `config/mail.php` Example
 
 ```php
-return [
-    'apikey' => env('MAIL_SENDSAY_APIKEY'),
-    'account' => env('MAIL_SENDSAY_ACCOUNT'),
-    'proxy' => env('MAIL_SENDSAY_PROXY'),
-    'dkimId' =>  env('MAIL_SENDSAY_DKIM_ID'),
-];
+'default' => env('MAIL_MAILER', 'smtp'),
+
+'mailers' => [
+    'sendsay' => [
+        'transport' => 'sendsay',
+        'account' => env('MAIL_SENDSAY_ACCOUNT'),
+        'apikey' => env('MAIL_SENDSAY_APIKEY'),
+        'proxy' => env('MAIL_SENDSAY_PROXY'),
+        'dkimId' => env('MAIL_SENDSAY_DKIM_ID'),
+    ],
+],
 ```
 
 ## Testing
@@ -43,21 +53,16 @@ composer test
 
 ## Changelog
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+Please see repository releases and tags for changelog details.
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Contributions are welcome. Please open an issue first for major changes.
 
-## Security Vulnerabilities
+## Security
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
-## Credits
-
-- [Tony V](https://github.com/vaninanton)
-- [All Contributors](../../contributors)
+If you discover a security issue, please contact the maintainers privately.
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see `LICENSE.md` for details.

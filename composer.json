@@ -1,31 +1,19 @@
 {
     "name": "gocpa/sendsay-laravel-mailer",
-    "description": "Неофициальный Laravel драйвер для Sendsay",
-    "keywords": [
-        "gocpa",
-        "laravel-mailer",
-        "sendsay"
-    ],
-    "homepage": "https://github.com/gocpa/sendsay-laravel-mailer",
+    "description": "Laravel mail transport driver for Sendsay API.",
+    "type": "library",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Tony V",
-            "email": "vaninanton@gmail.com",
-            "role": "Developer"
-        }
-    ],
     "require": {
         "php": "^8.1",
         "illuminate/contracts": "^10.0|^11.0|^12.0|^13.0",
-        "spatie/laravel-package-tools": "^1.14.0",
-        "symfony/mailer": "^6.4|^7.0"
+        "symfony/mailer": "^6.4|^7.0",
+        "spatie/laravel-package-tools": "^1.14"
     },
     "require-dev": {
-        "nunomaduro/larastan": "^2.0.1",
-        "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-        "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0"
+        "nunomaduro/larastan": "^2",
+        "orchestra/testbench": "^8|^9|^10|^11",
+        "pestphp/pest": "^2",
+        "pestphp/pest-plugin-laravel": "^2"
     },
     "autoload": {
         "psr-4": {
@@ -37,8 +25,8 @@
             "GoCPA\\SendsayLaravelMailer\\Tests\\": "tests/"
         }
     },
-    "config": {
-        "sort-packages": true
+    "scripts": {
+        "test": "vendor/bin/pest"
     },
     "extra": {
         "laravel": {
@@ -47,6 +35,11 @@
             ]
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }
