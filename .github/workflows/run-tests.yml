@@ -55,6 +55,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+          if [ "${{ matrix.laravel }}" = "13.*" ]; then
+            composer remove --dev pestphp/pest-plugin-laravel --no-interaction --no-update
+          fi
           composer require --dev "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer config audit.block-insecure false
           composer update --prefer-dist --no-interaction --no-audit
