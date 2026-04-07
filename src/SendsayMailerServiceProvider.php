@@ -1,35 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GoCPA\SendsayLaravelMailer;
 
 use Illuminate\Support\Facades\Mail;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class SendsayMailerServiceProvider extends PackageServiceProvider
+final class SendsayMailerServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package
             ->name('sendsay-laravel-mailer')
             ->hasConfigFile('sendsay-laravel-mailer');
     }
 
-    public function packageBooted()
+    public function bootingPackage(): void
     {
-        Mail::extend('sendsay', function () {
-            $config = $this->app['config']->get('sendsay-laravel-mailer', []);
-            $account = $config['account'] ?? null;
-            $apikey = $config['apikey'] ?? null;
-            $proxy = $config['proxy'] ?? null;
-            $dkimId = $config['dkimId'] ?? null;
-
-            return new SendsayMailerTransport($account, $apikey, $proxy, $dkimId);
+        Mail::extend('sendsay', function (array $config): SendsayMailerTransport {
+            return new SendsayMailerTransport(
+                account: (string) ($config['account'] ?? config('sendsay-laravel-mailer.account', '')),
+                apikey: (string) ($config['apikey'] ?? config('sendsay-laravel-mailer.apikey', '')),
+                proxy: $this->stringOrNull($config['proxy'] ?? config('sendsay-laravel-mailer.proxy')),
+                dkimId: $this->stringOrNull($config['dkimId'] ?? config('sendsay-laravel-mailer.dkimId'))
+            );
         });
+    }
+
+    private function stringOrNull(mixed $value): ?string
+    {
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+
+        return $value;
     }
 }
