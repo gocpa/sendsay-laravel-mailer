@@ -5,6 +5,11 @@
 
 Неофициальный драйвер Laravel Mailer для отправки писем через Sendsay
 
+## Compatibility
+
+- Laravel: 10.x - 13.x
+- PHP: 8.1 - 8.5
+
 ## Installation
 
 You can install the package via composer:
